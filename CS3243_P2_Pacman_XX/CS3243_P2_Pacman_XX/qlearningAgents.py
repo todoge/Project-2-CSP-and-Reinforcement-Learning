@@ -43,6 +43,11 @@ class QLearningAgent(ReinforcementAgent):
         ReinforcementAgent.__init__(self, **args)
 
         "*** YOUR CODE HERE ***"
+        # How to initialize?
+        # Q[state][action]
+        # Q-table, 2D matrix (indexed as above)
+        # Use a dict for Q-table, key would be state, action would be next key, then value is the Q-value
+        # dictionary in a dictionary
 
     def getQValue(self, state, action):
         """
@@ -51,6 +56,7 @@ class QLearningAgent(ReinforcementAgent):
           or the Q node value otherwise
         """
         "*** YOUR CODE HERE ***"
+        # Lookup in the dictionary
         util.raiseNotDefined()
 
 
@@ -62,6 +68,9 @@ class QLearningAgent(ReinforcementAgent):
           terminal state, you should return a value of 0.0.
         """
         "*** YOUR CODE HERE ***"
+        # Get all legal actions for this state
+        # You get Q[state][action] -> getQValue(state, action)
+        # Output the max Q-value
         util.raiseNotDefined()
 
     def computeActionFromQValues(self, state):
@@ -71,6 +80,10 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         "*** YOUR CODE HERE ***"
+        # Best policy action
+        # From lec slides, the part on Pr[choosing action a|s]
+        # self.epsilon and getQValue (Q[state][action]) likely to be used
+        # maybe have to use softmax
         util.raiseNotDefined()
 
     def getAction(self, state):
@@ -88,6 +101,9 @@ class QLearningAgent(ReinforcementAgent):
         legalActions = self.getLegalActions(state)
         action = None
         "*** YOUR CODE HERE ***"
+        # Calls getPolicy for best policy action.
+        # util.flipCoin(self.epsilon) --> if False, then then just return best policy action.
+        # Otherwise, use random.choice(legalActions - {best policy action}), and return that. 
         util.raiseNotDefined()
 
         return action
@@ -102,6 +118,9 @@ class QLearningAgent(ReinforcementAgent):
           it will be called on your behalf
         """
         "*** YOUR CODE HERE ***"
+        # 3d lecture slides
+        # val = reward + self.gamma * getValue(nextState)
+        # we update in the Q table for Q[state][action] as (1 - self.alpha)*getQValue(state, action) + self.alpha*val
         util.raiseNotDefined()
 
     def getPolicy(self, state):
