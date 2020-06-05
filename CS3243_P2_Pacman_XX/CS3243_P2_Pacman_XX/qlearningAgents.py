@@ -48,6 +48,7 @@ class QLearningAgent(ReinforcementAgent):
         # Q-table, 2D matrix (indexed as above)
         # Use a dict for Q-table, key would be state, action would be next key, then value is the Q-value
         # dictionary in a dictionary
+        self.Q = dict()
 
     def getQValue(self, state, action):
         """
@@ -57,7 +58,13 @@ class QLearningAgent(ReinforcementAgent):
         """
         "*** YOUR CODE HERE ***"
         # Lookup in the dictionary
-        util.raiseNotDefined()
+        QValue = self.Q.get(state)
+        if QValue == None:
+          self.Q[state][action] = 0.0
+          return 0.0
+        else: 
+          return QValue[action]
+        # util.raiseNotDefined()
 
 
     def computeValueFromQValues(self, state):
@@ -71,7 +78,17 @@ class QLearningAgent(ReinforcementAgent):
         # Get all legal actions for this state
         # You get Q[state][action] -> getQValue(state, action)
         # Output the max Q-value
-        util.raiseNotDefined()
+        legalActions = self.getLegalActions(state)
+        if not legalActions:
+          return 0.0
+
+        maxQValue = self.getQValue(state, legalActions[0])  
+        for action in legalActions:
+          val = self.getQValue(state, action)
+          if val > maxQValue:
+            maxQValue = val    
+        return maxQValue
+        # util.raiseNotDefined()
 
     def computeActionFromQValues(self, state):
         """
@@ -84,7 +101,20 @@ class QLearningAgent(ReinforcementAgent):
         # From lec slides, the part on Pr[choosing action a|s]
         # self.epsilon and getQValue (Q[state][action]) likely to be used
         # maybe have to use softmax
-        util.raiseNotDefined()
+        legalActions = self.getLegalActions
+        if not legalActions:
+          return None
+
+        # I feel no need to use epsilon and the e^epsilon*Qvalue, since higher the Q value, isn't e^epsilon*Qvalue higher?
+        maxQValueAction = legalActions[0]
+        maxQValue = self.getQValue(state, maxQValueAction)  
+        for action in legalActions:
+          val = self.getQValue(state, action)
+          if val > maxQValue:
+            maxQValueAction = action
+            maxQValue = val 
+        return maxQValueAction
+        # util.raiseNotDefined()
 
     def getAction(self, state):
         """
@@ -104,7 +134,12 @@ class QLearningAgent(ReinforcementAgent):
         # Calls getPolicy for best policy action.
         # util.flipCoin(self.epsilon) --> if False, then then just return best policy action.
         # Otherwise, use random.choice(legalActions - {best policy action}), and return that. 
-        util.raiseNotDefined()
+        bestPolicy = getPolicy(state)
+        if (util.flipCoin(self.epsilon)):
+          action = random.choice(legalActions) # need to change to legalActions - {best policy action} ?
+        else:
+          action = bestPolicy  
+        # util.raiseNotDefined()
 
         return action
 
@@ -121,7 +156,10 @@ class QLearningAgent(ReinforcementAgent):
         # 3d lecture slides
         # val = reward + self.gamma * getValue(nextState)
         # we update in the Q table for Q[state][action] as (1 - self.alpha)*getQValue(state, action) + self.alpha*val
-        util.raiseNotDefined()
+        curr_val = getQValue(state, action)
+        new_val = (1 - self.alpha) * curr_val + self.alpha * (reward + self.gamma * getValue(nextState))
+        self.Q[state][action] = new_val
+        # util.raiseNotDefined()
 
     def getPolicy(self, state):
         return self.computeActionFromQValues(state)
