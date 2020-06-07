@@ -134,7 +134,7 @@ class QLearningAgent(ReinforcementAgent):
         # Calls getPolicy for best policy action.
         # util.flipCoin(self.epsilon) --> if False, then then just return best policy action.
         # Otherwise, use random.choice(legalActions - {best policy action}), and return that. 
-        bestPolicy = getPolicy(state)
+        bestPolicy = self.getPolicy(state)
         if (util.flipCoin(self.epsilon)):
           action = random.choice(legalActions) # need to change to legalActions - {best policy action} ?
         else:
@@ -156,8 +156,8 @@ class QLearningAgent(ReinforcementAgent):
         # 3d lecture slides
         # val = reward + self.gamma * getValue(nextState)
         # we update in the Q table for Q[state][action] as (1 - self.alpha)*getQValue(state, action) + self.alpha*val
-        curr_val = getQValue(state, action)
-        new_val = (1 - self.alpha) * curr_val + self.alpha * (reward + self.gamma * getValue(nextState))
+        curr_val = self.getQValue(state, action)
+        new_val = (1 - self.alpha) * curr_val + self.alpha * (reward + self.gamma * self.getValue(nextState))
         self.Q[state][action] = new_val
         # util.raiseNotDefined()
 
