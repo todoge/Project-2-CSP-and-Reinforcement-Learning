@@ -16,7 +16,8 @@ from game import *
 from learningAgents import ReinforcementAgent
 from featureExtractors import *
 
-import random,util,math
+import random, util, math
+
 
 class QLearningAgent(ReinforcementAgent):
     """
@@ -38,6 +39,7 @@ class QLearningAgent(ReinforcementAgent):
         - self.getLegalActions(state)
           which returns legal actions for a state
     """
+
     def __init__(self, **args):
         "You can initialize Q-values here..."
         ReinforcementAgent.__init__(self, **args)
@@ -70,7 +72,6 @@ class QLearningAgent(ReinforcementAgent):
                 return QValue[action]
 
         # util.raiseNotDefined()
-
 
     def computeValueFromQValues(self, state):
         """
@@ -113,15 +114,15 @@ class QLearningAgent(ReinforcementAgent):
         # maybe have to use softmax
         legalActions = self.getLegalActions(state)
         if not len(legalActions):
-          return None
+            return None
 
         # I feel no need to use epsilon and the e^epsilon*Qvalue, since higher the Q value, isn't e^epsilon*Qvalue higher?
         maxQValue = -1e10
         for action in legalActions:
-          val = self.getQValue(state, action)
-          if val > maxQValue:
-            maxQValueAction = action
-            maxQValue = val
+            val = self.getQValue(state, action)
+            if val > maxQValue:
+                maxQValueAction = action
+                maxQValue = val
         return maxQValueAction
         # util.raiseNotDefined()
 
@@ -144,11 +145,11 @@ class QLearningAgent(ReinforcementAgent):
         # util.flipCoin(self.epsilon) --> if False, then then just return best policy action.
         # Otherwise, use random.choice(legalActions - {best policy action}), and return that. 
         bestPolicy = self.getPolicy(state)
-        if (util.flipCoin(self.epsilon)):
-          action = random.choice(legalActions) # need to change to legalActions - {best policy action} ?
+        if util.flipCoin(self.epsilon):
+            action = random.choice(legalActions)  # need to change to legalActions - {best policy action} ?
         else:
-          action = bestPolicy  
-        # util.raiseNotDefined()
+            action = bestPolicy
+            # util.raiseNotDefined()
 
         return action
 
@@ -167,7 +168,7 @@ class QLearningAgent(ReinforcementAgent):
         # we update in the Q table for Q[state][action] as (1 - self.alpha)*getQValue(state, action) + self.alpha*val
         curr_val = self.getQValue(state, action)
         # new_val = (1 - self.alpha) * curr_val + self.gamma * (reward + self.alpha * self.getValue(nextState))
-        new_val = (1-self.alpha) * curr_val + self.alpha * (reward + self.discount * self.getValue(nextState))
+        new_val = (1 - self.alpha) * curr_val + self.alpha * (reward + self.discount * self.getValue(nextState))
         self.Q[state][action] = new_val
         # util.raiseNotDefined()
 
@@ -181,7 +182,7 @@ class QLearningAgent(ReinforcementAgent):
 class PacmanQAgent(QLearningAgent):
     "Exactly the same as QLearningAgent, but with different default parameters"
 
-    def __init__(self, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0, **args):
+    def __init__(self, epsilon=0.05, gamma=0.8, alpha=0.2, numTraining=0, **args):
         """
         These default parameters can be changed from the pacman.py command line.
         For example, to change the exploration rate, try:
@@ -205,8 +206,8 @@ class PacmanQAgent(QLearningAgent):
         informs parent of action for Pacman.  Do not change or remove this
         method.
         """
-        action = QLearningAgent.getAction(self,state)
-        self.doAction(state,action)
+        action = QLearningAgent.getAction(self, state)
+        self.doAction(state, action)
         return action
 
 
@@ -218,6 +219,7 @@ class ApproximateQAgent(PacmanQAgent):
        and update.  All other QLearningAgent functions
        should work as is.
     """
+
     def __init__(self, extractor='IdentityExtractor', **args):
         self.featExtractor = util.lookup(extractor, globals())()
         PacmanQAgent.__init__(self, **args)
