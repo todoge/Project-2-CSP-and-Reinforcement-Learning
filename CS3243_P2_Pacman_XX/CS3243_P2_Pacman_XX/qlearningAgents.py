@@ -82,7 +82,7 @@ class QLearningAgent(ReinforcementAgent):
         if not legalActions:
           return 0.0
 
-        maxQValue = self.getQValue(state, legalActions[0])  
+        maxQValue = self.getQValue(state, legalActions[0])
         for action in legalActions:
           val = self.getQValue(state, action)
           if val > maxQValue:
@@ -107,7 +107,7 @@ class QLearningAgent(ReinforcementAgent):
 
         # I feel no need to use epsilon and the e^epsilon*Qvalue, since higher the Q value, isn't e^epsilon*Qvalue higher?
         maxQValueAction = legalActions[0]
-        maxQValue = self.getQValue(state, maxQValueAction)  
+        maxQValue = self.getQValue(state, maxQValueAction)
         for action in legalActions:
           val = self.getQValue(state, action)
           if val > maxQValue:
@@ -222,14 +222,22 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        QValue = 0.0
+        features = self.featExtractor.getFeatures(state, action)
+        for feature in features:
+            QValue += features[feature] * self.weights[feature]
+        return QValue
 
     def update(self, state, action, nextState, reward):
         """
            Should update your weights based on transition
         """
+        # difference = (r + gamma * maxaQ(s0; a0)) - Q(s, a)
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        features = self.featExtractor.getFeatures(state, action)
+        difference = reward + self.discount * self.getValue(nextState) - self.getQValue(state, action)
+        for feature in features:
+            self.weights[feature] += self.alpha * difference * features[feature]
 
     def final(self, state):
         "Called at the end of each game."
