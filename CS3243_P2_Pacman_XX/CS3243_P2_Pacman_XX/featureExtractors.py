@@ -107,8 +107,58 @@ class NewExtractor(FeatureExtractor):
     Design you own feature extractor here. You may define other helper functions you find necessary.
     """
     def getFeatures(self, state, action):
-        "*** YOUR CODE HERE ***"
-        pass
+        # extract the grid of food and wall locations and get the ghost locations
+        food = state.getFood()
+        walls = state.getWalls()
+        ghosts = state.getGhostPositions()
+        ghostsStates = state.getGhostStates()
+        features = util.Counter()
+
+        features["bias"] = 1.0
+
+        # compute the location of pacman after he takes the action
+        x, y = state.getPacmanPosition()
+        dx, dy = Actions.directionToVector(action)
+        next_x, next_y = int(x + dx), int(y + dy)
+
+        # count the number of ghosts 1-step away
+        # features["#-of-ghosts-0-step-away"] = sum((x, y) in Actions.getLegalNeighbors(g, walls) for g in ghosts)
+        # features["#-of-ghosts-1-step-away"] = sum((next_x, next_y) in Actions.getLegalNeighbors(g, walls) for g in ghosts)
+        features["eats-ghost"] = 0
+        features["#-of-ghosts-1-step-away"] = 0
+        ghostIndex = 0
+        for g in ghosts:
+            if (x, y) in Actions.getLegalNeighbors(g, walls):
+                for gState in ghostsStates:
+                    if gState.getPosition() == g and gState.scaredTimer > 0:
+                        features["eats-ghost"] += 10
+            if (next_x, next_y) in Actions.getLegalNeighbors(g, walls):
+                for gState in ghostsStates:
+                    if gState.getPosition() == g and gState.scaredTimer > 0:
+                        if food[next_x][next_y]:
+                            features["eats-food"] = 1.0
+                    elif gState.getPosition() == g:
+                        features["#-of-ghosts-1-step-away"] += 1
+
+        # step 1: get all the ghost 1 step away and ghost 0 step away
+        # step 2: if there is a ghost, i check if the ghost is scared
+        #        if ghost is scared and 0 step away, add feature --> eat ghost
+        #        if ghost is scared but 1 step away and there is food --> eat food
+        # step 3: run away --> optimisation
+
+        # check if ghost is scared
+
+        # if there is no danger of ghosts then add the food feature
+        if not features["#-of-ghosts-1-step-away"] and food[next_x][next_y]:
+            features["eats-food"] = 1.0
+
+        dist = closestFood((next_x, next_y), food, walls)
+        if dist is not None:
+            # make the distance a number less than one otherwise the update
+            # will diverge wildly
+            features["closest-food"] = float(dist) / (walls.width * walls.height)
+        features.divideAll(10.0)
+        return features
 
 
         
