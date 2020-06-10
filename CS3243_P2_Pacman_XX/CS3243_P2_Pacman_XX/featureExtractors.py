@@ -130,13 +130,12 @@ class NewExtractor(FeatureExtractor):
         for g in ghosts:
             if (x, y) in Actions.getLegalNeighbors(g, walls):
                 for gState in ghostsStates:
-                    if gState.getPosition() == g and gState.scaredTimer > 0:
+                    if gState.getPosition() == g and gState.scaredTimer > 0.1:
                         features["eats-ghost"] += 10
             if (next_x, next_y) in Actions.getLegalNeighbors(g, walls):
                 for gState in ghostsStates:
-                    if gState.getPosition() == g and gState.scaredTimer > 0:
-                        if food[next_x][next_y]:
-                            features["eats-food"] = 1.0
+                    if gState.getPosition() == g and gState.scaredTimer > 0.3:
+                        features["chase-ghost"] += 2
                     elif gState.getPosition() == g:
                         features["#-of-ghosts-1-step-away"] += 1
 
